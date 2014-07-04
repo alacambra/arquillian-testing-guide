@@ -7,6 +7,8 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.inject.Inject;
 import static org.junit.Assert.*;
 
+import com.tad.arqdevguide.chp3.HelloWorldAlternative;
+import com.tad.arqdevguide.chp3.IHelloWorld;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -28,19 +30,20 @@ public class HelloCDITest {
 	@Deployment
 	public static Archive<?> createTestArchive() {
 		return ShrinkWrap.create(JavaArchive.class).addClass(HelloWorld.class)
-				.addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                .addClass(HelloWorldAlternative.class)
+				.addAsManifestResource("META-INF/beans.xml");
 	}
 
 	@Inject
 	BeanManager beanManager;
 
 	@Inject
-	HelloWorld helloWorld;
+    IHelloWorld helloWorld;
 
 	@Test
 	public void testCdiBootstrap() {
 		assertNotNull(beanManager);
 		assertFalse(beanManager.getBeans(BeanManager.class).isEmpty());
-		assertEquals("Hello, World!", helloWorld.getText());
+		assertEquals("Hello, Alternate World!", helloWorld.getText());
 	}
 }
